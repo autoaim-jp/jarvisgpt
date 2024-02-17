@@ -1,5 +1,5 @@
 SHELL=/bin/bash
-PHONY=default app-up app-rebuild app-down help
+PHONY=default app-up app-rebuild app-down yarn-add help
 
 .PHONY: $(PHONY)
 

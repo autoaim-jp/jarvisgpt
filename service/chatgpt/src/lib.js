@@ -4,6 +4,21 @@ export const init = ({ winston }) => {
   mod.winston = winston
 }
 
+export const createAmqpConnection = async ({
+  amqplib, AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT,
+}) => {
+  const conn = await amqplib.connect(`amqp://${AMQP_USER}:${AMQP_PASS}@${AMQP_HOST}:${AMQP_PORT}`)
+  return conn
+}
+
+export const awaitSleep = ({ ms }) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, ms)
+  })
+}
+
 const _createGlobalLogger = ({ SERVICE_NAME }) => {
   const logger = mod.winston.createLogger({
     level: 'info',
