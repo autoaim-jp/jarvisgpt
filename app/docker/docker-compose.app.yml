@@ -1,0 +1,64 @@
+version: '3'
+
+services:
+  rabbitmq_container:
+    container_name: jarvisgpt-app-rabbitmq
+    image: rabbitmq:3.11-management
+    ports:
+      - 127.0.0.1:5672:5672
+        #      - 127.0.0.1:15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabmqconjarvisgpt
+      - RABBITMQ_DEFAULT_PASS=ziab@1s2pw
+    volumes:
+      - ../../service/rabbitmq/data:/var/lib/rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics check_port_connectivity
+      interval: 5s
+      timeout: 10s
+      retries: 20
+
+  chatgpt_container:
+    container_name: jarvisgpt-app-chatgpt
+    build:
+      context: ../../
+      dockerfile: ./service/chatgpt/docker/Dockerfile
+    tty: true
+    working_dir: /app
+    volumes:
+      - ../../service/chatgpt/src:/app
+      - jarvisgpt-app-volume-chatgpt-nodemodules:/app/node_modules
+    command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
+    healthcheck:
+      test: ls /tmp/setup.done
+      interval: 5s
+      timeout : 5s
+      retries: 10
+    depends_on:
+      rabbitmq_container:
+        condition: service_healthy
+
+  voicepeak_container:
+    container_name: jarvisgpt-app-voicepeak
+    build:
+      context: ../../
+      dockerfile: ./service/voicepeak/docker/Dockerfile
+    tty: true
+    working_dir: /app
+    volumes:
+      - ../../service/voicepeak/src:/app
+      - jarvisgpt-app-volume-voicepeak-nodemodules:/app/node_modules
+    command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
+    healthcheck:
+      test: ls /tmp/setup.done
+      interval: 5s
+      timeout : 5s
+      retries: 10
+    depends_on:
+      rabbitmq_container:
+        condition: service_healthy
+
+volumes:
+  jarvisgpt-app-volume-chatgpt-nodemodules:
+  jarvisgpt-app-volume-voicepeak-nodemodules:
+

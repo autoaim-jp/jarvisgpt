@@ -1,0 +1,14 @@
+# secret
+.env
+
+# data
+service/rabbitmq/data/
+log/
+
+# nodejs
+node_modules/
+yarn.lock
+yarn-error.log
+package-lock.json
+
+
