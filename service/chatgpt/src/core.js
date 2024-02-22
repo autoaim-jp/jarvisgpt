@@ -19,6 +19,7 @@ export const init = async ({
 }
 
 const _fetchChatgpt = async ({ role, prompt }) => {
+  console.log('start _fetchChatgpt', { role, prompt })
   const stream = await mod.openaiClient.chat.completions.create({
     // model: 'gpt-4',
     model: 'gpt-3.5-turbo',
@@ -33,14 +34,16 @@ const _fetchChatgpt = async ({ role, prompt }) => {
 
   const responseObj = { response }
 
+  console.log('end _fetchChatgpt', { role, prompt, response })
   return responseObj
 }
 
-const _consumeAmqpHandler = ({ promptQueue, responseQueue }) => {
+const _consumeAmqpHandler = ({ responseQueue }) => {
   return async (msg) => {
     if (msg !== null) {
+      console.log({ msg })
       const SLEEP_BEFORE_REQUEST_MS = mod.setting.getValue('chatgpt.SLEEP_BEFORE_REQUEST_MS')
-      console.log(`sleep ${SLEEP_BEFORE_REQUEST_MS}s`)
+      console.log(`sleep ${SLEEP_BEFORE_REQUEST_MS}ms`)
       await mod.lib.awaitSleep({ ms: SLEEP_BEFORE_REQUEST_MS })
 
       const requestJson = JSON.parse(msg.content.toString())
@@ -70,7 +73,7 @@ export const startConsumer = async () => {
   const responseQueue = mod.setting.getValue('amqp.CHATGPT_RESPONSE_QUEUE')
   await mod.amqpResponseChannel.assertQueue(responseQueue)
 
-  mod.amqpPromptChannel.consume(promptQueue, _consumeAmqpHandler({ promptQueue, responseQueue }))
+  mod.amqpPromptChannel.consume(promptQueue, _consumeAmqpHandler({ responseQueue }))
 }
 
 export default {}
