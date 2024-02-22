@@ -32,9 +32,34 @@ const _fetchChatgpt = async ({ role, prompt }) => {
     response += part.choices[0]?.delta?.content || ''
   }
 
-  const responseObj = { response }
-
   console.log('end _fetchChatgpt', { role, prompt, response })
+  return response
+}
+
+const _convertChatgptResponse = ({ requestId, chatgptResponse }) => {
+  const responseObj = {}
+  /* split by split-word*/
+  const textList = chatgptResponse.split(/、|。/g).filter((text) => { return text !== '' })
+  if (textList.length === 0) {
+    return responseObj
+  }
+
+  /* append split-word */
+  let appendIndex = 0
+  chatgptResponse.split('').forEach((char) => {
+    if (['、', '。'].indexOf(char) >= 0) {
+      textList[appendIndex] = textList[appendIndex] + char
+      appendIndex += 1
+    }
+  })
+
+  /* generate id */
+  textList.forEach((text, i) => {
+    const fourDigit = ('000' + i).slice(-4)
+    const textId = `${requestId}_${fourDigit}`
+    responseObj[textId] = { text }
+  })
+
   return responseObj
 }
 
@@ -52,7 +77,8 @@ const _consumeAmqpHandler = ({ responseQueue }) => {
       const role = requestJson.role || mod.setting.getValue('chatgpt.DEFAULT_ROLE')
       const prompt = requestJson.prompt || mod.setting.getValue('chatgpt.DEFAULT_ROLE')
 
-      const responseObj = await _fetchChatgpt({ role, prompt })
+      const chatgptResponse = await _fetchChatgpt({ role, prompt })
+      const responseObj = _convertChatgptResponse({ requestId, chatgptResponse })
       const responseJson = { requestId, response: responseObj }
       const responseJsonStr = JSON.stringify(responseJson)
       mod.amqpResponseChannel.sendToQueue(responseQueue, Buffer.from(responseJsonStr))

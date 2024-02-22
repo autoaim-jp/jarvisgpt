@@ -12,28 +12,12 @@ export const init = async ({
   mod.lib = lib
 }
 
-const _fetchChatgpt = async ({ role, prompt }) => {
-  const stream = await mod.openaiClient.chat.completions.create({
-    // model: 'gpt-4',
-    model: 'gpt-3.5-turbo',
-    messages: [{ role, content: prompt }],
-    stream: true,
-  })
-  let response = ''
-  for await (const part of stream) {
-    // process.stdout.write(part.choices[0]?.delta?.content || '')
-    response += part.choices[0]?.delta?.content || ''
-  }
 
-  const responseObj = { response }
-
-  return responseObj
-}
-
-const _consumeAmqpHandler = ({ chatgptResponseQueue, voiceQueue }) => {
+const _consumeAmqpHandler = ({ voiceQueue }) => {
   return async (msg) => {
     if (msg !== null) {
       const requestJson = JSON.parse(msg.content.toString())
+      console.log({ requestJson })
       const responseJson = { dummyVoiceEncoded: requestJson }
       const responseJsonStr = JSON.stringify(responseJson)
       mod.amqpResponseChannel.sendToQueue(voiceQueue, Buffer.from(responseJsonStr))
@@ -54,7 +38,7 @@ export const startConsumer = async () => {
   const voiceQueue = mod.setting.getValue('amqp.VOICE_DATA_QUEUE')
   await mod.amqpResponseChannel.assertQueue(voiceQueue)
 
-  mod.amqpPromptChannel.consume(chatgptResponseQueue, _consumeAmqpHandler({ chatgptResponseQueue, voiceQueue }))
+  mod.amqpPromptChannel.consume(chatgptResponseQueue, _consumeAmqpHandler({ voiceQueue }))
 }
 
 export default {}
