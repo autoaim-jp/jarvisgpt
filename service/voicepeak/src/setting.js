@@ -14,6 +14,10 @@ export const init = ({ env }) => {
 setting.amqp = {}
 setting.amqp.CHATGPT_RESPONSE_QUEUE = 'chatgpt-response'
 setting.amqp.VOICE_DATA_QUEUE = 'response-speak'
+setting.amqp.MAX_THREAD_N = 3
+
+setting.file = {}
+setting.file.RESULT_FILE_DIR = 'data/'
 
 export const getList = (...keyList) => {
   /* eslint-disable no-param-reassign */
