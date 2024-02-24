@@ -25,6 +25,7 @@ const _consumeAmqpHandler = () => {
       const { requestId, voiceFilePath, textId } = requestJson
 
       logger.info({ msg: 'play', voiceFilePath })
+      mod.voiceFilePathList.push(voiceFilePath)
 
       const commandList = ['soxi', '-D', voiceFilePath]
       const outputList = []
@@ -46,7 +47,8 @@ const _consumeAmqpHandler = () => {
 export const handleFileRequest = ({ res }) => {
   const voiceFilePath = mod.voiceFilePathList.shift()
   if (voiceFilePath) {
-    res.end(mod.input.readFile({ filePath: voiceFilePath }))
+    // res.end(mod.input.readFile({ filePath: voiceFilePath }))
+    res.end(voiceFilePath)
   } else {
     res.status(404)
     res.end()

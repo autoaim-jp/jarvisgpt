@@ -42,7 +42,7 @@ const startWebServer = () => {
   expressApp.disable('x-powered-by')
 
   const { handleFileRequest } = a.core
-  expressApp.get('/result.wav', a.action.getFileHandler({ handleFileRequest }))
+  expressApp.get('/', a.action.getFileHandler({ handleFileRequest }))
 
   const server = http.createServer(expressApp)
   const { SERVER_PORT } = a.setting.getList('server.SERVER_PORT')
