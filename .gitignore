@@ -5,6 +5,9 @@
 service/rabbitmq/data/
 log/
 
+# bin
+bin/
+
 # nodejs
 node_modules/
 yarn.lock

@@ -13,12 +13,26 @@ export const init = async ({
   mod.amqpSpeakChannel = amqpSpeakChannel
 }
 
-const _convertTextToVoiceFile = ({ requestJson }) => {
+// debug export
+export const _convertTextToVoiceFile = async ({ requestJson }) => {
   const { requestId, textId, text, maxTextId } = requestJson
-  const textFilePath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/${textId}.wav`
+
+  // debug
+  // const textFilePath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/${textId}.wav`
+  const textFilePath = '0002.wav'
+
   const voiceEncoded = { requestId, textId, textFilePath, }
 
+  // debug
+  const commandList = ['/app/bin/Voicepeak/voicepeak', '-s', text, '-o', textFilePath]
+  // const commandList = ['~/Documents/VoicepeakDownloads/Voicepeak/voicepeak', '-s', text, '-o', textFilePath]
+  const outputList = []
+  const isShell = true
+  console.log({ commandList })
+  await mod.lib.fork({ commandList, outputList, isShell })
+
   console.log('ここでvoicepeakで変換', voiceEncoded)
+  console.log({ outputList })
 
   return voiceEncoded
 }
@@ -30,7 +44,7 @@ const _consumeAmqpHandler = ({ voiceQueue }) => {
       const requestJson = JSON.parse(msg.content.toString())
       console.log({ requestJson })
 
-      const voiceEncoded = _convertTextToVoiceFile({ requestJson })
+      const voiceEncoded = await _convertTextToVoiceFile({ requestJson })
 
       const responseJson = { voiceEncoded, }
       const responseJsonStr = JSON.stringify(responseJson)

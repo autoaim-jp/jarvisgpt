@@ -14,7 +14,8 @@ channel.queue_declare(queue=queue_name, durable=True)
 
 request_json = { 'requestId': '20240223_1', 'role': 'user', 'prompt': '四季は美しいですか。' }
 message = json.dumps(request_json, ensure_ascii=False)
-channel.basic_publish(exchange="", routing_key=queue_name, body=message)
+print("debug silent")
+# channel.basic_publish(exchange="", routing_key=queue_name, body=message)
 print("Sent:", message)
 
 connection.close()
