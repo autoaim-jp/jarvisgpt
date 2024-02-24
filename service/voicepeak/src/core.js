@@ -17,14 +17,14 @@ export const init = async ({
 export const _convertTextToVoiceFile = async ({ requestJson }) => {
   const { requestId, textId, text, maxTextId } = requestJson
 
-  const textFilePath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/${textId}.wav`
+  const voiceFilePath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/${textId}.wav`
 
-  const voiceEncoded = { requestId, textId, textFilePath, }
+  const voiceEncoded = { requestId, textId, voiceFilePath, }
 
   // for docker
-  // const commandList = ['/app/bin/Voicepeak/voicepeak', '-s', text, '-o', textFilePath]
+  // const commandList = ['/app/bin/Voicepeak/voicepeak', '-s', text, '-o', voiceFilePath]
   // for host
-  const commandList = ['~/Documents/VoicepeakDownloads/Voicepeak/voicepeak', '-s', `'${text}'`, '-o', textFilePath]
+  const commandList = ['~/Documents/VoicepeakDownloads/Voicepeak/voicepeak', '-s', `'${text}'`, '-o', voiceFilePath]
   const outputList = []
   const isShell = true
   await mod.lib.fork({ commandList, outputList, isShell })

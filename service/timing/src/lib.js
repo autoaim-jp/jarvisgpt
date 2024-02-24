@@ -1,7 +1,8 @@
 const mod = {}
 
-export const init = ({ winston }) => {
+export const init = ({ winston, spawn }) => {
   mod.winston = winston
+  mod.spawn = spawn
 }
 
 export const createAmqpConnection = async ({

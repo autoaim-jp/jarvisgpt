@@ -1,14 +1,17 @@
 const mod = {}
 
 export const init = async ({
-  setting, lib, amqpConnection,
+  setting, input, lib, amqpConnection,
 }) => {
   mod.setting = setting
+  mod.input = input
   mod.lib = lib
 
   const amqpVoiceChannel = await amqpConnection.createChannel()
   amqpVoiceChannel.prefetch(mod.setting.getValue('amqp.MAX_THREAD_N'))
   mod.amqpVoiceChannel = amqpVoiceChannel
+
+  mod.voiceFilePathList = []
 }
 
 const _consumeAmqpHandler = () => {
@@ -19,23 +22,34 @@ const _consumeAmqpHandler = () => {
       const requestJson = JSON.parse(msg.content.toString())
 
       logger.info({ requestJson })
-      const { requestId, textFilePath, textId } = requestJson
+      const { requestId, voiceFilePath, textId } = requestJson
 
-      logger.info({ msg: 'play', textFilePath })
+      logger.info({ msg: 'play', voiceFilePath })
 
-      const commandList = ['soxi', '-D', textFilePath]
+      const commandList = ['soxi', '-D', voiceFilePath]
       const outputList = []
       const isShell = false
       await mod.lib.fork({ commandList, outputList, isShell })
+      logger.info({ outputList })
 
       const quietMs = (outputList[0] || 0) * 1000
-      await mod.awaitSleep(quietMs)
+      await mod.lib.awaitSleep({ ms: quietMs })
 
       mod.amqpVoiceChannel.ack(msg)
     } else {
       // Consumer cancelled by server
       throw new Error()
     }
+  }
+}
+
+export const handleFileRequest = ({ res }) => {
+  const voiceFilePath = mod.voiceFilePathList.shift()
+  if (voiceFilePath) {
+    res.end(mod.input.readFile({ filePath: voiceFilePath }))
+  } else {
+    res.status(404)
+    res.end()
   }
 }
 

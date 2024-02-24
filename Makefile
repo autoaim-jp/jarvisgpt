@@ -5,7 +5,7 @@ PHONY=default app-up app-rebuild app-down app-build yarn-add help
 
 default: app-up
 
-app-up: docker-compose-up-app
+app-up: start-voicepeak-container start-player docker-compose-up-app
 app-rebuild: app-down app-build
 app-down: docker-compose-down-app
 app-build: docker-compose-build-app
@@ -21,6 +21,13 @@ help:
 	@echo "	make yarn-add container= package=	add node_modules package"
 	@echo "	make help	show help"
 
+
+
+start-voicepeak-container:
+	# cd service/voicepeak/src/ && yarn install && yarn start &
+
+start-player:
+	# cd app/player/bin/ && ./fetchAndPlay.sh &
 
 docker-compose-up-app:
 	docker compose -p jarvisgpt-app -f ./app/docker/docker-compose.app.yml up
