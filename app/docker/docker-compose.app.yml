@@ -19,14 +19,11 @@ services:
       retries: 20
 
   vosk_container:
-    build:
-      context: ../../
-      dockerfile: ./service/vosk/docker/Dockerfile
+    container_name: jarvisgpt-app-vosk
+    image: alphacep/kaldi-ja:latest
+    ports:
+      - 127.0.0.1:2700:2700
     tty: true
-    working_dir: /app
-    volumes:
-      - ../../service/vosk/src:/app
-    command: sh -c "python app.py"
     depends_on:
       rabbitmq_container:
         condition: service_healthy
