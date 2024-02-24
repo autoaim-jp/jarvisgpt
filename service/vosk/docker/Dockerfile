@@ -5,5 +5,6 @@ RUN apt-get update
  
 RUN pip install --upgrade pip
 
-RUN python -m pip install pika python-dotenv --upgrade
+RUN python -m pip install pika python-dotenv sounddevice --upgrade
+RUN python -m pip install websockets argparse --upgrade
 

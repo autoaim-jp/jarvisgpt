@@ -18,15 +18,32 @@ services:
       timeout: 10s
       retries: 20
 
-  vosk_container:
-    container_name: jarvisgpt-app-vosk
+  vosk_server_container:
+    container_name: jarvisgpt-app-vosk-server
     image: alphacep/kaldi-ja:latest
     ports:
       - 127.0.0.1:2700:2700
     tty: true
+    devices:
+      - /dev/snd:/dev/snd
     depends_on:
       rabbitmq_container:
         condition: service_healthy
+
+# run in local instead of docker because sounddevice fails in docker
+#   vosk_client_container:
+#     container_name: jarvisgpt-app-vosk-client
+#     build:
+#       context: ../../
+#       dockerfile: ./service/vosk/docker/Dockerfile
+#     tty: true
+#     working_dir: /app
+#     volumes:
+#       - ../../service/vosk/src:/app
+#     command: sh -c "python app.py"
+#     depends_on:
+#       rabbitmq_container:
+#         condition: service_healthy
 
   chatgpt_container:
     container_name: jarvisgpt-app-chatgpt
