@@ -17,8 +17,6 @@ export const init = async ({
 export const _convertTextToVoiceFile = async ({ requestJson }) => {
   const { requestId, textId, text, maxTextId } = requestJson
 
-  // for debug
-  // const textFilePath = '0002.wav'
   const textFilePath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/${textId}.wav`
 
   const voiceEncoded = { requestId, textId, textFilePath, }
@@ -30,10 +28,6 @@ export const _convertTextToVoiceFile = async ({ requestJson }) => {
   const outputList = []
   const isShell = true
   await mod.lib.fork({ commandList, outputList, isShell })
-
-  /* run async */
-  const playCommandList = ['aplay', textFilePath]
-  mod.lib.fork({ commandList: playCommandList, outputList, isShell })
 
   return voiceEncoded
 }
@@ -47,8 +41,7 @@ const _consumeAmqpHandler = ({ voiceQueue }) => {
 
       const voiceEncoded = await _convertTextToVoiceFile({ requestJson })
 
-      const responseJson = { voiceEncoded, }
-      const responseJsonStr = JSON.stringify(responseJson)
+      const responseJsonStr = JSON.stringify(voiceEncoded)
       mod.amqpSpeakChannel.sendToQueue(voiceQueue, Buffer.from(responseJsonStr))
 
       mod.amqpChatgptChannel.ack(msg)
