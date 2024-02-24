@@ -24,10 +24,10 @@ help:
 
 
 start-voicepeak-container:
-	# cd service/voicepeak/src/ && yarn install && yarn start &
+	cd service/voicepeak/src/ && yarn install && yarn start &
 
 start-player:
-	# cd app/player/bin/ && ./fetchAndPlay.sh &
+	cd app/player/bin/ && ./fetchAndPlay.sh &
 
 docker-compose-up-app:
 	docker compose -p jarvisgpt-app -f ./app/docker/docker-compose.app.yml up

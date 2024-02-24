@@ -13,7 +13,7 @@ channel = connection.channel()
 channel.queue_declare(queue=queue_name, durable=True)
 
 # request_json = { 'requestId': '20240223_1', 'role': 'user', 'prompt': 'say test' }
-request_json = { 'requestId': '20240223_1', 'role': 'user', 'prompt': 'ピアノの雑学を教えてください。' }
+request_json = { 'requestId': '20240223_1', 'role': 'user', 'prompt': '電気回路と電子回路の違いを教えてください。' }
 message = json.dumps(request_json, ensure_ascii=False)
 channel.basic_publish(exchange="", routing_key=queue_name, body=message)
 print("Sent:", message)
