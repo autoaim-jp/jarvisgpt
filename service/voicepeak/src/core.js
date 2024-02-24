@@ -24,7 +24,7 @@ export const _convertTextToVoiceFile = async ({ requestJson }) => {
   // for docker
   // const commandList = ['/app/bin/Voicepeak/voicepeak', '-s', text, '-o', voiceFilePath]
   // for host
-  const commandList = ['~/Documents/VoicepeakDownloads/Voicepeak/voicepeak', '-s', `'${text}'`, '-o', voiceFilePath]
+  const commandList = ['~/Documents/VoicepeakDownloads/Voicepeak/voicepeak', '-s', `'${text}'`, '--speed', '150', '-o', voiceFilePath]
   const outputList = []
   const isShell = true
   await mod.lib.fork({ commandList, outputList, isShell })

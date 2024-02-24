@@ -20,8 +20,10 @@ setting.amqp.CHATGPT_RESPONSE_QUEUE = 'chatgpt-response'
 setting.chatgpt = {}
 setting.chatgpt.DEFAULT_ROLE = 'user'
 setting.chatgpt.DEFAULT_PROMPT = 'what is chatgpt'
-setting.chatgpt.SLEEP_BEFORE_REQUEST_MS = 5 * 1000
-
+// debug
+// setting.chatgpt.SLEEP_BEFORE_REQUEST_MS = 5 * 1000
+setting.chatgpt.SLEEP_BEFORE_REQUEST_MS = 0 * 1000 + 1
+setting.chatgpt.SPLIT_WORD_LIST = ['、', '。', '！', '？']
 
 export const getList = (...keyList) => {
   /* eslint-disable no-param-reassign */

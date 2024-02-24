@@ -39,7 +39,8 @@ const _fetchChatgpt = async ({ role, prompt }) => {
 const _convertChatgptResponse = ({ requestId, chatgptResponse }) => {
   const speakRequestList = []
   /* split by split-word*/
-  const textList = chatgptResponse.split(/、|。/g).filter((text) => { return text !== '' })
+  const splitWordList = mod.setting.getValue('chatgpt.SPLIT_WORD_LIST')
+  const textList = chatgptResponse.split(new RegExp(splitWordList.join('|'), 'g')).filter((text) => { return text !== '' })
   if (textList.length === 0) {
     return speakRequestList
   }
@@ -47,7 +48,7 @@ const _convertChatgptResponse = ({ requestId, chatgptResponse }) => {
   /* append split-word */
   let appendIndex = 0
   chatgptResponse.split('').forEach((char) => {
-    if (['、', '。'].indexOf(char) >= 0) {
+    if (splitWordList.indexOf(char) >= 0) {
       textList[appendIndex] = textList[appendIndex] + char
       appendIndex += 1
     }
@@ -61,6 +62,19 @@ const _convertChatgptResponse = ({ requestId, chatgptResponse }) => {
   })
 
   return speakRequestList
+}
+
+const _filterPrompt = ({ prompt }) => {
+  let promptFiltered = null
+  let promptCondition = '100文字以内で解答。口語で解答。'
+  if (prompt.indexOf('ねぇ') >= 0 || prompt.indexOf('ねー') >= 0) {
+    promptFiltered = promptCondition + prompt
+  }
+  if (prompt.indexOf('教えて') >= 0) {
+    promptFiltered = promptCondition + prompt
+  }
+
+  return promptFiltered
 }
 
 const _consumeAmqpHandler = ({ responseQueue }) => {
@@ -77,7 +91,13 @@ const _consumeAmqpHandler = ({ responseQueue }) => {
       const role = requestJson.role || mod.setting.getValue('chatgpt.DEFAULT_ROLE')
       const prompt = requestJson.prompt || mod.setting.getValue('chatgpt.DEFAULT_ROLE')
 
-      const chatgptResponse = await _fetchChatgpt({ role, prompt })
+      const promptFiltered = _filterPrompt({ prompt })
+      if (promptFiltered === null) {
+        mod.amqpPromptChannel.ack(msg)
+        return
+      }
+
+      const chatgptResponse = await _fetchChatgpt({ role, prompt: promptFiltered })
       const speakRequestList = _convertChatgptResponse({ requestId, chatgptResponse })
       speakRequestList.forEach((speakRequest) => {
         const speakRequestJsonStr = JSON.stringify(speakRequest)

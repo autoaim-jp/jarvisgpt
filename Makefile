@@ -24,7 +24,7 @@ help:
 
 
 start-voicepeak-container:
-	cd service/voicepeak/src/ && yarn install && yarn start &
+	cd service/voicepeak/src/ && yarn install && yarn start-watch &
 
 start-player:
 	cd app/player/bin/ && ./fetchAndPlay.sh &
