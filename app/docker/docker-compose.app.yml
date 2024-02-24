@@ -38,25 +38,25 @@ services:
       rabbitmq_container:
         condition: service_healthy
 
-  voicepeak_container:
-    container_name: jarvisgpt-app-voicepeak
-    build:
-      context: ../../
-      dockerfile: ./service/voicepeak/docker/Dockerfile
-    tty: true
-    working_dir: /app
-    volumes:
-      - ../../service/voicepeak/src:/app
-      - jarvisgpt-app-volume-voicepeak-nodemodules:/app/node_modules
-    command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
-    healthcheck:
-      test: ls /tmp/setup.done
-      interval: 5s
-      timeout : 5s
-      retries: 10
-    depends_on:
-      rabbitmq_container:
-        condition: service_healthy
+#   voicepeak_container:
+#     container_name: jarvisgpt-app-voicepeak
+#     build:
+#       context: ../../
+#       dockerfile: ./service/voicepeak/docker/Dockerfile
+#     tty: true
+#     working_dir: /app
+#     volumes:
+#       - ../../service/voicepeak/src:/app
+#       - jarvisgpt-app-volume-voicepeak-nodemodules:/app/node_modules
+#     command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
+#     healthcheck:
+#       test: ls /tmp/setup.done
+#       interval: 5s
+#       timeout : 5s
+#       retries: 10
+#     depends_on:
+#       rabbitmq_container:
+#         condition: service_healthy
 
   vosk_container:
     build:

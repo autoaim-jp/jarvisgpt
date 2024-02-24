@@ -17,15 +17,16 @@ export const init = async ({
 export const _convertTextToVoiceFile = async ({ requestJson }) => {
   const { requestId, textId, text, maxTextId } = requestJson
 
-  // debug
-  // const textFilePath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/${textId}.wav`
-  const textFilePath = '0002.wav'
+  // for debug
+  // const textFilePath = '0002.wav'
+  const textFilePath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/${textId}.wav`
 
   const voiceEncoded = { requestId, textId, textFilePath, }
 
-  // debug
-  const commandList = ['/app/bin/Voicepeak/voicepeak', '-s', text, '-o', textFilePath]
-  // const commandList = ['~/Documents/VoicepeakDownloads/Voicepeak/voicepeak', '-s', text, '-o', textFilePath]
+  // for docker
+  // const commandList = ['/app/bin/Voicepeak/voicepeak', '-s', text, '-o', textFilePath]
+  // for host
+  const commandList = ['~/Documents/VoicepeakDownloads/Voicepeak/voicepeak', '-s', `'${text}'`, '-o', textFilePath]
   const outputList = []
   const isShell = true
   console.log({ commandList })

@@ -39,9 +39,10 @@ const main = async () => {
   logger.info(`start`)
 
   // debug
+  /*
   const requestJson = { requestId: 'reqid', textId: '0001', text: '今日も一日お疲れ様です。', maxTextId: 1 }
   a.core._convertTextToVoiceFile({ requestJson })
-
+  */
 }
 
 const app = {

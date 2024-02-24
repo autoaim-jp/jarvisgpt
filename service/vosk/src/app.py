@@ -12,10 +12,9 @@ queue_name = "recorded-voice"
 channel = connection.channel()
 channel.queue_declare(queue=queue_name, durable=True)
 
-request_json = { 'requestId': '20240223_1', 'role': 'user', 'prompt': '四季は美しいですか。' }
+request_json = { 'requestId': '20240223_1', 'role': 'user', 'prompt': 'ピアノの雑学を教えてください。' }
 message = json.dumps(request_json, ensure_ascii=False)
-print("debug silent")
-# channel.basic_publish(exchange="", routing_key=queue_name, body=message)
+channel.basic_publish(exchange="", routing_key=queue_name, body=message)
 print("Sent:", message)
 
 connection.close()

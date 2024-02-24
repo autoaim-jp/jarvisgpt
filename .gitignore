@@ -3,6 +3,7 @@
 
 # data
 service/rabbitmq/data/
+service/voicepeak/src/data/
 log/
 
 # bin
