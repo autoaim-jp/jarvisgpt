@@ -29,11 +29,11 @@ export const _convertTextToVoiceFile = async ({ requestJson }) => {
   const commandList = ['~/Documents/VoicepeakDownloads/Voicepeak/voicepeak', '-s', `'${text}'`, '-o', textFilePath]
   const outputList = []
   const isShell = true
-  console.log({ commandList })
   await mod.lib.fork({ commandList, outputList, isShell })
 
-  console.log('ここでvoicepeakで変換', voiceEncoded)
-  console.log({ outputList })
+  /* run async */
+  const playCommandList = ['aplay', textFilePath]
+  mod.lib.fork({ commandList: playCommandList, outputList, isShell })
 
   return voiceEncoded
 }
