@@ -23,7 +23,7 @@ help:
 
 
 start-recorder:
-	cd service/vosk/src/ && python3 app.py &
+	cd service/vosk/src/ && pip3 install -r requirements.txt && python3 app.py &
 
 start-voicepeak-container:
 	cd service/voicepeak/src/ && yarn install && yarn start-watch &
