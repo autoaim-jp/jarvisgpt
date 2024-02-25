@@ -5,7 +5,7 @@ PHONY=default app-up app-rebuild app-down app-build yarn-add help
 
 default: app-up
 
-app-up: start-voicepeak-container start-player docker-compose-up-app
+app-up: start-recorder start-voicepeak-container start-player docker-compose-up-app
 app-rebuild: app-down app-build
 app-down: docker-compose-down-app
 app-build: docker-compose-build-app
@@ -22,6 +22,8 @@ help:
 	@echo "	make help	show help"
 
 
+start-recorder:
+	# cd service/vosk/src/ && python3 app.py &
 
 start-voicepeak-container:
 	cd service/voicepeak/src/ && yarn install && yarn start-watch &

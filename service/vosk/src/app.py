@@ -7,6 +7,7 @@ import logging
 import sounddevice as sd
 import argparse
 import pika
+import re
 from dotenv import load_dotenv
 
 channel = None
@@ -39,7 +40,6 @@ async def run_test():
                 result_json = json.loads(result_str)
                 if 'text' in result_json:
                     text = result_json["text"].replace(' ', '')
-                    print (text)
                     send_amqp (text)
 
             await websocket.send('{"eof" : 1}')
@@ -53,8 +53,13 @@ def init_amqp():
     channel = connection.channel()
     channel.queue_declare(queue=queue_name, durable=True)
 
-def send_amqp(text):
+def send_amqp(text_candidate):
     global channel
+
+    text = re.sub(r'^(えーと|うーん)', "", text_candidate)
+    if text == "":
+        return
+    print (text)
 # request_json = { 'requestId': '20240223_1', 'role': 'user', 'prompt': 'say test' }
     request_json = { 'requestId': '20240223_1', 'role': 'user', 'prompt': text }
     message = json.dumps(request_json, ensure_ascii=False)

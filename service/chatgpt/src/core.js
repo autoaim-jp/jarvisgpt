@@ -48,6 +48,9 @@ const _convertChatgptResponse = ({ requestId, chatgptResponse }) => {
   /* append split-word */
   let appendIndex = 0
   chatgptResponse.split('').forEach((char) => {
+    if (appendIndex >= textList.length) {
+      return
+    }
     if (splitWordList.indexOf(char) >= 0) {
       textList[appendIndex] = textList[appendIndex] + char
       appendIndex += 1
