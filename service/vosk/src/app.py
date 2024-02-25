@@ -8,6 +8,7 @@ import sounddevice as sd
 import argparse
 import pika
 import re
+import time
 from dotenv import load_dotenv
 
 channel = None
@@ -29,26 +30,40 @@ async def run_test():
     with sd.RawInputStream(samplerate=args.samplerate, blocksize = 4000, device=args.device, dtype='int16',
                            channels=1, callback=callback) as device:
 
-        async with websockets.connect(args.uri) as websocket:
-            await websocket.send('{ "config" : { "sample_rate" : %d } }' % (device.samplerate))
+        while True:
+            try:
+                time.sleep(1)
+                async with websockets.connect(args.uri) as websocket:
+                    await websocket.send('{ "config" : { "sample_rate" : %d } }' % (device.samplerate))
 
-            while True:
-                data = await audio_queue.get()
-                await websocket.send(data)
+                    while True:
+                        data = await audio_queue.get()
+                        await websocket.send(data)
 #                print (await websocket.recv())
-                result_str = await websocket.recv()
-                result_json = json.loads(result_str)
-                if 'text' in result_json:
-                    text = result_json["text"].replace(' ', '')
-                    send_amqp (text)
+                        result_str = await websocket.recv()
+                        result_json = json.loads(result_str)
+                        if 'text' in result_json:
+                            text = result_json["text"].replace(' ', '')
+                            send_amqp (text)
 
-            await websocket.send('{"eof" : 1}')
-            print (await websocket.recv())
+                    await websocket.send('{"eof" : 1}')
+                    print (await websocket.recv())
+            except ConnectionRefusedError as err:
+                print("retry websocket...")
+            except websockets.exceptions.InvalidMessage as err:
+                print("retry websocket...")
 
 def init_amqp():
     global channel
     credentials = pika.PlainCredentials(os.environ['AMQP_USER'], os.environ['AMQP_PASS'])
-    connection = pika.BlockingConnection(pika.ConnectionParameters(host=os.environ['AMQP_HOST'], port=os.environ['AMQP_PORT'], credentials=credentials))
+
+    while True:
+        try:
+            time.sleep(1)
+            connection = pika.BlockingConnection(pika.ConnectionParameters(host=os.environ['AMQP_HOST'], port=os.environ['AMQP_PORT'], credentials=credentials))
+            break
+        except pika.exceptions.AMQPConnectionError as err:
+            print("retry connecting...")
 
     channel = connection.channel()
     channel.queue_declare(queue=queue_name, durable=True)
