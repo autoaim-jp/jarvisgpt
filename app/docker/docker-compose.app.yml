@@ -86,6 +86,26 @@ services:
 #       rabbitmq_container:
 #         condition: service_healthy
 
+  openjtalk_container:
+    container_name: jarvisgpt-app-openjtalk
+    build:
+      context: ../../
+      dockerfile: ./service/openjtalk/docker/Dockerfile
+    tty: true
+    working_dir: /app
+    volumes:
+      - ../../service/openjtalk/src:/app
+      - jarvisgpt-app-volume-openjtalk-nodemodules:/app/node_modules
+    command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
+    healthcheck:
+      test: ls /tmp/setup.done
+      interval: 5s
+      timeout : 5s
+      retries: 10
+    depends_on:
+      rabbitmq_container:
+        condition: service_healthy
+
   timing_container:
     container_name: jarvisgpt-app-timing
     build:
@@ -115,4 +135,5 @@ volumes:
   jarvisgpt-app-volume-timing-nodemodules:
 # run in local instead of docker because voicepeak fails in docker
 #  jarvisgpt-app-volume-voicepeak-nodemodules:
+  jarvisgpt-app-volume-openjtalk-nodemodules:
 
