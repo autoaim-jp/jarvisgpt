@@ -9,6 +9,7 @@ import argparse
 import pika
 import re
 import time
+import datetime
 from dotenv import load_dotenv
 
 channel = None
@@ -52,7 +53,7 @@ async def run_test():
                 print("retry websocket...")
             except websockets.exceptions.InvalidMessage as err:
                 print("retry websocket...")
-            except Error as err:
+            except:
                 print("retry websocket...")
 
 def init_amqp():
@@ -78,7 +79,9 @@ def send_amqp(text_candidate):
         return
     print (text)
 # request_json = { 'requestId': '20240223_1', 'role': 'user', 'prompt': 'say test' }
-    request_json = { 'requestId': '20240223_1', 'role': 'user', 'prompt': text }
+    now = datetime.datetime.now()
+    request_id = now.strftime('%Y%m%d_%H%M%S_%f')
+    request_json = { 'requestId': request_id, 'role': 'user', 'prompt': text }
     message = json.dumps(request_json, ensure_ascii=False)
     channel.basic_publish(exchange="", routing_key=queue_name, body=message)
     print("Sent:", message)
@@ -116,3 +119,5 @@ async def main():
 
 if __name__ == '__main__':
     asyncio.run(main())
+
+

@@ -5,15 +5,17 @@ import amqplib from 'amqplib'
 import { spawn } from 'child_process'
 
 import * as setting from './setting.js'
+import * as output from './output.js'
 import * as core from './core.js'
 import * as lib from './lib.js'
 
-const asocial = { setting, core, lib, }
+const asocial = { setting, output, core, lib, }
 const a = asocial
 
 const init = async () => {
   dotenv.config()
   setting.init({ env: process.env })
+  output.init({ fs })
   lib.init({ winston, spawn })
 
   const { SERVICE_NAME } = a.setting.getList('env.SERVICE_NAME')
@@ -26,7 +28,7 @@ const init = async () => {
     amqplib, AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT,
   })
   await core.init({
-    setting, lib, amqpConnection,
+    setting, output, lib, amqpConnection,
   })
 
   logger.info(`init done`)

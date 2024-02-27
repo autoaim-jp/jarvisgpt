@@ -1,9 +1,10 @@
 const mod = {}
 
 export const init = async ({
-  setting, lib, amqpConnection,
+  setting, output, lib, amqpConnection,
 }) => {
   mod.setting = setting
+  mod.output = output
   mod.lib = lib
 
   const amqpChatgptChannel = await amqpConnection.createChannel()
@@ -17,9 +18,12 @@ export const init = async ({
 export const _convertTextToVoiceFile = async ({ requestJson }) => {
   const { requestId, textId, text, maxTextId } = requestJson
 
-  const voiceFilePath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/${textId}.wav`
+  const voiceDirPath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/`
+  const voiceFilePath = `${voiceDirPath}${textId}.wav`
 
   const voiceEncoded = { requestId, textId, voiceFilePath, }
+
+  mod.output.makeDir({ path: voiceDirPath })
 
   // for docker
   // const commandList = ['/app/bin/Voicepeak/voicepeak', '-s', text, '-o', voiceFilePath]
