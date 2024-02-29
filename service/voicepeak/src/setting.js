@@ -3,11 +3,13 @@ const setting = {}
 export const init = ({ env }) => {
   const { 
     SERVICE_NAME, 
-    AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT
+    AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT,
+    SPEAK_CONTAINER,
   } = env
   setting.env = { 
     SERVICE_NAME, 
-    AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT
+    AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT,
+    SPEAK_CONTAINER,
   }
 }
 

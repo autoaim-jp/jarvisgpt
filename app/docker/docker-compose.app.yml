@@ -77,6 +77,8 @@ services:
 #       - ../../service/voicepeak/src:/app
 #       - jarvisgpt-app-volume-voicepeak-nodemodules:/app/node_modules
 #     command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
+#     environment:
+#       - SPEAK_CONTAINER=${SPEAK_CONTAINER}
 #     healthcheck:
 #       test: ls /tmp/setup.done
 #       interval: 5s
@@ -95,8 +97,11 @@ services:
     working_dir: /app
     volumes:
       - ../../service/openjtalk/src:/app
+      - ../../service/voicepeak/src/data:/app/data
       - jarvisgpt-app-volume-openjtalk-nodemodules:/app/node_modules
     command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
+    environment:
+      - SPEAK_CONTAINER=${SPEAK_CONTAINER}
     healthcheck:
       test: ls /tmp/setup.done
       interval: 5s

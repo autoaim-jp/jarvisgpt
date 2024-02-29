@@ -31,6 +31,8 @@ const init = async () => {
     setting, output, lib, amqpConnection,
   })
 
+  core.cleanExitNodemonAfterChekingSpeakContainer()
+
   logger.info(`init done`)
 }
 

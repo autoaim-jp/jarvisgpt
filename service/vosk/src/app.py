@@ -54,7 +54,8 @@ async def run_test():
             except websockets.exceptions.InvalidMessage as err:
                 print("retry websocket...")
             except:
-                print("retry websocket...")
+                print("retry websocket from init...")
+                init_amqp()
 
 def init_amqp():
     global channel
@@ -70,6 +71,7 @@ def init_amqp():
 
     channel = connection.channel()
     channel.queue_declare(queue=queue_name, durable=True)
+    print("connected.")
 
 def send_amqp(text_candidate):
     global channel

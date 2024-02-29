@@ -14,8 +14,19 @@ export const init = async ({
   mod.amqpSpeakChannel = amqpSpeakChannel
 }
 
-// debug export
-export const _convertTextToVoiceFile = async ({ requestJson }) => {
+export const cleanExitNodemonAfterChekingSpeakContainer = () => {
+  const { SPEAK_CONTAINER, SERVICE_NAME } = mod.setting.getList('env.SPEAK_CONTAINER', 'env.SERVICE_NAME')
+  logger.info({ msg: 'check SPEAK_CONTAINER', SPEAK_CONTAINER, SERVICE_NAME })
+  if (SPEAK_CONTAINER !== SERVICE_NAME) {
+    logger.info({ msg: 'exit because of the other SPEAK_CONTAINER' })
+    process.once('SIGUSR2', () => {
+      process.kill(process.pid, 'SIGUSR2')
+    })
+    process.exit(0)
+  }
+}
+
+const _convertTextToVoiceFile = async ({ requestJson }) => {
   const { requestId, textId, text, maxTextId } = requestJson
 
   const voiceDirPath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/`

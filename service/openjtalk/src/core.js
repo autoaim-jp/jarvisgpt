@@ -14,8 +14,19 @@ export const init = async ({
   mod.amqpSpeakChannel = amqpSpeakChannel
 }
 
-// debug export
-export const _convertTextToVoiceFile = async ({ requestJson }) => {
+export const cleanExitNodemonAfterChekingSpeakContainer = () => {
+  const { SPEAK_CONTAINER, SERVICE_NAME } = mod.setting.getList('env.SPEAK_CONTAINER', 'env.SERVICE_NAME')
+  logger.info({ msg: 'check SPEAK_CONTAINER', SPEAK_CONTAINER, SERVICE_NAME })
+  if (SPEAK_CONTAINER !== SERVICE_NAME) {
+    logger.info({ msg: 'exit because of the other SPEAK_CONTAINER' })
+    process.once('SIGUSR2', () => {
+      process.kill(process.pid, 'SIGUSR2')
+    })
+    process.exit(0)
+  }
+}
+
+const _convertTextToVoiceFile = async ({ requestJson }) => {
   const { requestId, textId, text, maxTextId } = requestJson
 
   const voiceDirPath = `${mod.setting.getValue('file.RESULT_FILE_DIR')}${requestId}/`
@@ -25,10 +36,9 @@ export const _convertTextToVoiceFile = async ({ requestJson }) => {
 
   mod.output.makeDir({ path: voiceDirPath })
 
-  // for docker
-  // const commandList = ['/app/bin/Voicepeak/voicepeak', '-s', text, '-o', voiceFilePath]
-  // for host
-  const commandList = ['echo', `'${text}'`, '|', 'open_jtalk', '-x', '/var/lib/mecab/dic/open-jtalk/naist-jdic/', '-m', '/usr/share/hts-voice/nitech-jp-atr503-m001/nitech_jp_atr503_m001.htsvoice', '-r', '1.0', '-ow', voiceFilePath]
+  // if hts-voice-nitech-jp-atr503-m001 package is available
+  // const commandList = ['echo', `'${text}'`, '|', 'open_jtalk', '-x', '/var/lib/mecab/dic/open-jtalk/naist-jdic/', '-m', '/usr/share/hts-voice/nitech-jp-atr503-m001/nitech_jp_atr503_m001.htsvoice', '-r', '1.0', '-ow', voiceFilePath]
+  const commandList = ['echo', `'${text}'`, '|', 'open_jtalk', '-x', '/var/lib/mecab/dic/open-jtalk/naist-jdic/', '-m', '/usr/share/hts-voice/mei_normal.htsvoice', '-r', '1.0', '-ow', voiceFilePath]
   const outputList = []
   const isShell = true
   await mod.lib.fork({ commandList, outputList, isShell })
