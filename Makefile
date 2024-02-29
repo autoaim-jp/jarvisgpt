@@ -34,10 +34,7 @@ start-player:
 	cd app/player/bin/ && ./fetchAndPlay.sh &
 
 docker-compose-up-app-openjtalk:
-	pacmd load-module module-native-protocol-unix socket=/tmp/pulseaudio.socket
-	pulseaudio --check -v 
 	SPEAK_CONTAINER=jarvisgpt-openjtalk docker compose -p jarvisgpt-app -f ./app/docker/docker-compose.app.yml up
-	pluseaudio --kill
 
 docker-compose-up-app-voicepeak:
 	SPEAK_CONTAINER=jarvisgpt-voicepeak docker compose -p jarvisgpt-app -f ./app/docker/docker-compose.app.yml up
