@@ -3,27 +3,20 @@ const setting = {}
 export const init = ({ env }) => {
   const { 
     SERVICE_NAME, 
-    OPENAI_CHATGPT_API_KEY, 
-    AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT
+    AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT,
   } = env
   setting.env = { 
     SERVICE_NAME, 
-    OPENAI_CHATGPT_API_KEY, 
-    AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT
+    AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT,
   }
 }
 
 setting.amqp = {}
-setting.amqp.CHATGPT_PROMPT_QUEUE = 'recorded-voice'
-setting.amqp.CHATGPT_RESPONSE_QUEUE = 'chatgpt-response'
+setting.amqp.VOICE_DATA_QUEUE = 'response-speak'
+setting.amqp.MAX_THREAD_N = 1
 
-setting.chatgpt = {}
-setting.chatgpt.DEFAULT_ROLE = 'user'
-setting.chatgpt.DEFAULT_PROMPT = 'what is chatgpt'
-// debug
-// setting.chatgpt.SLEEP_BEFORE_REQUEST_MS = 5 * 1000
-setting.chatgpt.SLEEP_BEFORE_REQUEST_MS = 0 * 1000 + 1
-setting.chatgpt.SPLIT_WORD_LIST = ['、', '。', '！', '？']
+setting.server = {}
+setting.server.SERVER_PORT = 8000
 
 export const getList = (...keyList) => {
   /* eslint-disable no-param-reassign */

@@ -8,15 +8,7 @@ export const init = ({ winston, spawn }) => {
 export const createAmqpConnection = async ({
   amqplib, AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT,
 }) => {
-  let conn = null
-  while (conn === null) {
-    try {
-      conn = await amqplib.connect(`amqp://${AMQP_USER}:${AMQP_PASS}@${AMQP_HOST}:${AMQP_PORT}`)
-    } catch(err) {
-      logger.error({ msg: 'amqplib connection', err })
-      await awaitSleep({ ms: 1 * 1000 })
-    }
-  }
+  const conn = await amqplib.connect(`amqp://${AMQP_USER}:${AMQP_PASS}@${AMQP_HOST}:${AMQP_PORT}`)
   return conn
 }
 
@@ -47,7 +39,6 @@ export const awaitSleep = ({ ms }) => {
     }, ms)
   })
 }
-
 
 const _createGlobalLogger = ({ SERVICE_NAME }) => {
   const logger = mod.winston.createLogger({

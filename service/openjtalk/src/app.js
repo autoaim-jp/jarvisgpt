@@ -20,7 +20,7 @@ const init = async () => {
 
   const { SERVICE_NAME } = a.setting.getList('env.SERVICE_NAME')
   lib.monkeyPatch({ SERVICE_NAME })
-
+ 
   const {
     AMQP_USER, AMQP_PASS, AMQP_HOST, AMQP_PORT,
   } = a.setting.getList('env.AMQP_USER', 'env.AMQP_PASS', 'env.AMQP_HOST', 'env.AMQP_PORT')

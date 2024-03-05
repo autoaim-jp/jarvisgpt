@@ -3,7 +3,13 @@
 
 # data
 service/rabbitmq/data/
+service/voicepeak/src/data/
+service/openjtalk/src/data/
+service/timing/src/data/
 log/
+
+# bin
+bin/
 
 # nodejs
 node_modules/

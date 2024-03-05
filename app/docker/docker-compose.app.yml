@@ -18,6 +18,33 @@ services:
       timeout: 10s
       retries: 20
 
+  vosk_server_container:
+    container_name: jarvisgpt-app-vosk-server
+    image: alphacep/kaldi-ja:latest
+    ports:
+      - 127.0.0.1:2700:2700
+    tty: true
+    devices:
+      - /dev/snd:/dev/snd
+    depends_on:
+      rabbitmq_container:
+        condition: service_healthy
+
+# run in local instead of docker because sounddevice fails in docker
+#   vosk_client_container:
+#     container_name: jarvisgpt-app-vosk-client
+#     build:
+#       context: ../../
+#       dockerfile: ./service/vosk/docker/Dockerfile
+#     tty: true
+#     working_dir: /app
+#     volumes:
+#       - ../../service/vosk/src:/app
+#     command: sh -c "python app.py"
+#     depends_on:
+#       rabbitmq_container:
+#         condition: service_healthy
+
   chatgpt_container:
     container_name: jarvisgpt-app-chatgpt
     build:
@@ -38,16 +65,65 @@ services:
       rabbitmq_container:
         condition: service_healthy
 
-  voicepeak_container:
-    container_name: jarvisgpt-app-voicepeak
+# run in local instead of docker because voicepeak fails in docker
+#   voicepeak_container:
+#     container_name: jarvisgpt-app-voicepeak
+#     build:
+#       context: ../../
+#       dockerfile: ./service/voicepeak/docker/Dockerfile
+#     tty: true
+#     working_dir: /app
+#     volumes:
+#       - ../../service/voicepeak/src:/app
+#       - jarvisgpt-app-volume-voicepeak-nodemodules:/app/node_modules
+#     command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
+#     environment:
+#       - SPEAK_CONTAINER=${SPEAK_CONTAINER}
+#     healthcheck:
+#       test: ls /tmp/setup.done
+#       interval: 5s
+#       timeout : 5s
+#       retries: 10
+#     depends_on:
+#       rabbitmq_container:
+#         condition: service_healthy
+
+  openjtalk_container:
+    container_name: jarvisgpt-app-openjtalk
     build:
       context: ../../
-      dockerfile: ./service/voicepeak/docker/Dockerfile
+      dockerfile: ./service/openjtalk/docker/Dockerfile
     tty: true
     working_dir: /app
     volumes:
-      - ../../service/voicepeak/src:/app
-      - jarvisgpt-app-volume-voicepeak-nodemodules:/app/node_modules
+      - ../../service/openjtalk/src:/app
+      - ../../service/voicepeak/src/data:/app/data
+      - jarvisgpt-app-volume-openjtalk-nodemodules:/app/node_modules
+    command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
+    environment:
+      - SPEAK_CONTAINER=${SPEAK_CONTAINER}
+    healthcheck:
+      test: ls /tmp/setup.done
+      interval: 5s
+      timeout : 5s
+      retries: 10
+    depends_on:
+      rabbitmq_container:
+        condition: service_healthy
+
+  timing_container:
+    container_name: jarvisgpt-app-timing
+    build:
+      context: ../../
+      dockerfile: ./service/timing/docker/Dockerfile
+    tty: true
+    working_dir: /app
+    ports:
+      - 127.0.0.1:8000:8000
+    volumes:
+      - ../../service/timing/src:/app
+      - ../../service/voicepeak/src/data:/app/data
+      - jarvisgpt-app-volume-timing-nodemodules:/app/node_modules
     command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
     healthcheck:
       test: ls /tmp/setup.done
@@ -58,7 +134,11 @@ services:
       rabbitmq_container:
         condition: service_healthy
 
+
 volumes:
   jarvisgpt-app-volume-chatgpt-nodemodules:
-  jarvisgpt-app-volume-voicepeak-nodemodules:
+  jarvisgpt-app-volume-timing-nodemodules:
+# run in local instead of docker because voicepeak fails in docker
+#  jarvisgpt-app-volume-voicepeak-nodemodules:
+  jarvisgpt-app-volume-openjtalk-nodemodules:
 
