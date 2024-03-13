@@ -37,9 +37,14 @@ services:
 #       context: ../../
 #       dockerfile: ./service/vosk/docker/Dockerfile
 #     tty: true
+#     environment:
+#       - PULSE_SERVER=unix:/tmp/pulseaudio.socket
+#       - PULSE_COOKIE=/tmp/pulseaudio.cookie
 #     working_dir: /app
 #     volumes:
 #       - ../../service/vosk/src:/app
+#       - ../../service/vosk/src/data/pulseaudio.client.conf:/etc/pulse/client.conf
+#       - ../../service/vosk/src/data/pulseaudio.socket:/tmp/pulseaudio.socket
 #     command: sh -c "python app.py"
 #     depends_on:
 #       rabbitmq_container:
@@ -127,9 +132,6 @@ services:
       - ../../service/timing/src/data/pulseaudio.client.conf:/etc/pulse/client.conf
       - ../../service/timing/src/data/pulseaudio.socket:/tmp/pulseaudio.socket
     command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
-    environment:
-      - PULSE_SERVER=unix:/tmp/pulseaudio.socket
-      - PULSE_COOKIE=/tmp/pulseaudio.cookie
     healthcheck:
       test: ls /tmp/setup.done
       interval: 5s

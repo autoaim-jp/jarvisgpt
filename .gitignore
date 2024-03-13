@@ -6,6 +6,7 @@ service/rabbitmq/data/
 service/voicepeak/src/data/
 service/openjtalk/src/data/
 service/timing/src/data/
+service/vosk/src/data/
 log/
 
 # bin

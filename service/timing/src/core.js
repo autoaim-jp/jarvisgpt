@@ -29,12 +29,6 @@ const _consumeAmqpHandler = () => {
 
       const isShell = false
 
-      const tmpOutputList = []
-      // await mod.lib.fork({ commandList: ['sox', '-h'], outputList: tmpOutputList, isShell })
-      const playCommandList = ['play', voiceFilePath, '-t', 'alsa']
-      await mod.lib.fork({ commandList: playCommandList, outputList: tmpOutputList, isShell })
-      logger.info({ tmpOutputList })
-
       const getDurationCommandList = ['soxi', '-D', voiceFilePath]
       const outputList = []
       await mod.lib.fork({ commandList: getDurationCommandList, outputList, isShell })
