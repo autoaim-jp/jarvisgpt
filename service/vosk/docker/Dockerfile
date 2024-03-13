@@ -3,7 +3,7 @@ FROM python:3
 
 RUN apt-get update -y
 
-RUN apt install -y pulseaudio libportaudio2
+RUN apt install -y pulseaudio
  
 RUN pip install --upgrade pip
 

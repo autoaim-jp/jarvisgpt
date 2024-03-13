@@ -30,24 +30,25 @@ services:
       rabbitmq_container:
         condition: service_healthy
 
-  vosk_client_container:
-    container_name: jarvisgpt-app-vosk-client
-    build:
-      context: ../../
-      dockerfile: ./service/vosk/docker/Dockerfile
-    tty: true
-    environment:
-      - PULSE_SERVER=unix:/tmp/pulseaudio.socket
-      - PULSE_COOKIE=/tmp/pulseaudio.cookie
-    working_dir: /app
-    volumes:
-      - ../../service/vosk/src:/app
-      - ../../service/vosk/src/data/pulseaudio.client.conf:/etc/pulse/client.conf
-      - ../../service/vosk/src/data/pulseaudio.socket:/tmp/pulseaudio.socket
-    command: sh -c "python app.py"
-    depends_on:
-      rabbitmq_container:
-        condition: service_healthy
+# run in local instead of docker because sounddevice fails in docker
+#   vosk_client_container:
+#     container_name: jarvisgpt-app-vosk-client
+#     build:
+#       context: ../../
+#       dockerfile: ./service/vosk/docker/Dockerfile
+#     tty: true
+#     environment:
+#       - PULSE_SERVER=unix:/tmp/pulseaudio.socket
+#       - PULSE_COOKIE=/tmp/pulseaudio.cookie
+#     working_dir: /app
+#     volumes:
+#       - ../../service/vosk/src:/app
+#       - ../../service/vosk/src/data/pulseaudio.client.conf:/etc/pulse/client.conf
+#       - ../../service/vosk/src/data/pulseaudio.socket:/tmp/pulseaudio.socket
+#     command: sh -c "python app.py"
+#     depends_on:
+#       rabbitmq_container:
+#         condition: service_healthy
 
   chatgpt_container:
     container_name: jarvisgpt-app-chatgpt

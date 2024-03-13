@@ -25,7 +25,7 @@ help:
 
 
 start-recorder:
-	# cd service/vosk/src/ && pip3 install -r requirements.txt && python3 app.py &
+	cd service/vosk/src/ && pip3 install -r requirements.txt && python3 app.py &
 
 start-voicepeak-container:
 	cd service/voicepeak/src/ && yarn install && SPEAK_CONTAINER=jarvisgpt-voicepeak yarn start-watch &
@@ -34,6 +34,9 @@ start-player:
 	cd app/player/bin/ && ./fetchAndPlay.sh &
 
 docker-compose-up-app-openjtalk:
+	SPEAK_CONTAINER=jarvisgpt-openjtalk docker compose -p jarvisgpt-app -f ./app/docker/docker-compose.app.yml up
+
+docker-compose-up-app-openjtalk-backup20240313:
 	pulseaudio --kill
 	rm -rf service/vosk/src/data/pulseaudio.socket
 	rm -rf service/vosk/src/data/pulseaudio.client.conf && touch service/vosk/src/data/pulseaudio.client.conf
