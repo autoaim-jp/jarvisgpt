@@ -27,10 +27,17 @@ const _consumeAmqpHandler = () => {
       logger.info({ msg: 'play', voiceFilePath })
       mod.voiceFilePathList.push(voiceFilePath)
 
-      const commandList = ['soxi', '-D', voiceFilePath]
-      const outputList = []
       const isShell = false
-      await mod.lib.fork({ commandList, outputList, isShell })
+
+      const tmpOutputList = []
+      // await mod.lib.fork({ commandList: ['sox', '-h'], outputList: tmpOutputList, isShell })
+      const playCommandList = ['play', voiceFilePath, '-t', 'alsa']
+      await mod.lib.fork({ commandList: playCommandList, outputList: tmpOutputList, isShell })
+      logger.info({ tmpOutputList })
+
+      const getDurationCommandList = ['soxi', '-D', voiceFilePath]
+      const outputList = []
+      await mod.lib.fork({ commandList: getDurationCommandList, outputList, isShell })
       logger.info({ outputList })
 
       const quietMs = (outputList[0] || 0) * 1000

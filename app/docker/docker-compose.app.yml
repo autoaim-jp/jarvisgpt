@@ -124,7 +124,12 @@ services:
       - ../../service/timing/src:/app
       - ../../service/voicepeak/src/data:/app/data
       - jarvisgpt-app-volume-timing-nodemodules:/app/node_modules
+      - ../../service/timing/src/data/pulseaudio.client.conf:/etc/pulse/client.conf
+      - ../../service/timing/src/data/pulseaudio.socket:/tmp/pulseaudio.socket
     command: sh -c "rm /tmp/setup.done || true && yarn run start-watch"
+    environment:
+      - PULSE_SERVER=unix:/tmp/pulseaudio.socket
+      - PULSE_COOKIE=/tmp/pulseaudio.cookie
     healthcheck:
       test: ls /tmp/setup.done
       interval: 5s
